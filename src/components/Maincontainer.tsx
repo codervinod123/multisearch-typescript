@@ -1,11 +1,18 @@
 import React,{useState,useEffect, useRef} from 'react'
 import Pill from './Pill'
 import { API_URL } from '../constants'
+import { FaMoon } from "react-icons/fa";
+import { FaSun } from "react-icons/fa";
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleTheme } from '../utils/themeSlice';
+import store from '../utils/store';
 
 interface User{
     firstName:string;
+    lastName:string;
     image:string;
     email:string;
+    id:number;
 }
 
 const Maincontainer:React.FC = () => {
@@ -15,6 +22,7 @@ const Maincontainer:React.FC = () => {
  const [suggestions,setSuggestions]=useState<User[]>([]);
  const [searchParam,setSearchParam]=useState<string>("");
  const [dummyUser,setDummyUser]=useState<User[]>([]);
+ const [theme,setTheme]=useState<boolean>(false);
 
   const fetchUser=async():Promise<void>=>{
         if(searchParam===""){
@@ -25,6 +33,8 @@ const Maincontainer:React.FC = () => {
             const data=await fetch(`${API_URL}${searchParam}`);
             const json=await data.json(); 
             setSuggestions(json.users)   
+            console.log(json.users);
+
         } catch (error) {
             console.log("Error has occured"); 
         }  
@@ -41,8 +51,30 @@ const Maincontainer:React.FC = () => {
      console.log(dummyUser);
   }
 
-  return (
+  const handleRemove=():void=>{
+     console.log("Hello from remove side");
+  }
+
+  const dispatch=useDispatch();
+  const handleThemeClick=()=>{
+     dispatch(toggleTheme());
+  }
+
+
+
+
+
+
+ return (
     <div className={`flex relative h-[100vh] w-[100%] transition-all dura bg-slate-800`}>
+
+
+        
+         {
+          1? <FaMoon onClick={handleThemeClick} className='text-white text-[25px] absolute right-4 top-4 cursor-pointer '/>
+          :<FaSun onClick={handleThemeClick} className='text-yellow-500 text-[25px] absolute right-4 top-4 cursor-pointer'/>
+         }
+
         <div className={`flex flex-col relative h-[60%] w-[80%] border rounded-md mx-auto my-auto bg-gray-600`}>
             
             <div className='relative'>
@@ -55,9 +87,10 @@ const Maincontainer:React.FC = () => {
                        <div key={index}>
                         <Pill 
                          name={data?.firstName}
-                        //  onClick={()=>handleRemove(data)}
-                         email={data?.email}
-                        //  image={data?.email}
+                         dummyUser={dummyUser}
+                         setDummyUser={setDummyUser}
+                         image={data?.image}
+                         id={data.id}
                        />
                        </div>
                     )
