@@ -3,9 +3,9 @@ import Pill from './Pill'
 import { API_URL } from '../constants'
 import { FaMoon } from "react-icons/fa";
 import { FaSun } from "react-icons/fa";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { toggleTheme } from '../utils/themeSlice';
-import store from '../utils/store';
+
 
 interface User{
     firstName:string;
@@ -22,7 +22,7 @@ const Maincontainer:React.FC = () => {
  const [suggestions,setSuggestions]=useState<User[]>([]);
  const [searchParam,setSearchParam]=useState<string>("");
  const [dummyUser,setDummyUser]=useState<User[]>([]);
- const [theme,setTheme]=useState<boolean>(false);
+
 
   const fetchUser=async():Promise<void>=>{
         if(searchParam===""){
@@ -41,8 +41,13 @@ const Maincontainer:React.FC = () => {
   }
   
   useEffect(()=>{
-     fetchUser();
-     console.log(suggestions);
+     
+     const timer=setTimeout(()=>{
+       fetchUser();
+     },500)
+
+     return ()=>{clearTimeout(timer)};
+
      inputRef.current?.focus();
   },[searchParam])
 
@@ -51,9 +56,7 @@ const Maincontainer:React.FC = () => {
      console.log(dummyUser);
   }
 
-  const handleRemove=():void=>{
-     console.log("Hello from remove side");
-  }
+ 
 
   const dispatch=useDispatch();
   const handleThemeClick=()=>{
